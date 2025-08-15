@@ -1,4 +1,4 @@
-#開啟專案
+# 開啟專案
 
 ...shell
 npm install
