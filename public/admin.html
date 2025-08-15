@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>後台管理｜商品上架 / 改價 / 庫存</title>
+  <style>
+    :root { --bg:#0f0f11; --card:#16171a; --muted:#a7aab0; --text:#e9eaee; --ok:#8bdc6e; --warn:#ffd166; --danger:#ff6b6b; --line:#2a2d33;}
+    *{box-sizing:border-box}
+    body{margin:0;background:#0f1115;color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",Roboto}
+    .wrap{max-width:1100px;margin:0 auto;padding:20px}
+    h1{margin:0 0 12px;font-size:22px}
+    .card{background:#16171a;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+    .row{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+    input,select,button{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#1b1e24;color:var(--text)}
+    button{cursor:pointer;font-weight:700}
+    .btn{background:#20232a}
+    .btn.ok{background:#1d2b21;border-color:#2d4533}
+    .btn.warn{background:#332b1d;border-color:#5a4a2d}
+    .muted{color:var(--muted);font-size:13px}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left}
+    .right{text-align:right}
+    .toolbar{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+    .pill{padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:#1e2025}
+    @media (max-width:900px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>後台管理</h1>
+    <div class="toolbar">
+      <span class="pill">API 主機：<code id="host"></code></span>
+      <label class="pill" style="display:flex;gap:8px;align-items:center;">
+        <span>Admin Token</span>
+        <input id="token" placeholder="x-admin-token" style="width:260px;background:#101218"/>
+        <button id="saveToken" class="btn ok" style="width:auto">儲存</button>
+      </label>
+      <button id="refresh" class="btn">重新載入商品</button>
+    </div>
+
+    <!-- 上架新商品 -->
+    <div class="card">
+      <h2 style="margin:0 0 10px;">上架新商品</h2>
+      <div class="row">
+        <div>
+          <label>商品 ID（英數底線）</label>
+          <input id="new_id" placeholder="例如 beans_new_250" />
+        </div>
+        <div>
+          <label>商品名稱</label>
+          <input id="new_name" placeholder="例如 新品 250g" />
+        </div>
+        <div>
+          <label>圖片路徑（public 下）</label>
+          <input id="new_img" placeholder="/img/new.png" />
+        </div>
+        <div>
+          <label>價格（TWD）</label>
+          <input id="new_price" type="number" min="0" step="1" value="100" />
+        </div>
+        <div>
+          <label>庫存（數量）</label>
+          <input id="new_stock" type="number" min="0" step="1" value="0" />
+        </div>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:8px;">
+        <button id="btnCreate" class="btn ok">上架</button>
+        <div id="msgCreate" class="muted"></div>
+      </div>
+    </div>
+
+    <!-- 改價 / 改庫存 -->
+    <div class="card">
+      <h2 style="margin:0 0 10px;">改價 / 改庫存 / 改名 / 改圖</h2>
+      <div class="row">
+        <div>
+          <label>選擇商品 ID</label>
+          <select id="edit_id"></select>
+        </div>
+        <div>
+          <label>新名稱</label>
+          <input id="edit_name" />
+        </div>
+        <div>
+          <label>新圖片</label>
+          <input id="edit_img" placeholder="/img/xxx.png" />
+        </div>
+        <div>
+          <label>新價格</label>
+          <input id="edit_price" type="number" min="0" step="1" />
+        </div>
+        <div>
+          <label>新庫存</label>
+          <input id="edit_stock" type="number" min="0" step="1" />
+        </div>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <button id="btnUpdate" class="btn warn">更新</button>
+        <button id="btnResetFromCurrent" class="btn">帶入目前資料</button>
+        <div id="msgUpdate" class="muted"></div>
+      </div>
+    </div>
+
+    <!-- 商品列表 -->
+    <div class="card">
+      <h2 style="margin:0 0 10px;">商品列表</h2>
+      <table id="prodTable">
+        <thead>
+          <tr>
+            <th>ID</th><th>名稱</th><th>圖片</th><th class="right">價格</th><th class="right">庫存</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+  </div>
+
+<script>
+  const host = location.origin;
+  document.getElementById('host').textContent = host;
+
+  const tokenInput = document.getElementById('token');
+  const saved = localStorage.getItem('ADMIN_TOKEN') || '';
+  tokenInput.value = saved;
+
+  document.getElementById('saveToken').onclick = () => {
+    localStorage.setItem('ADMIN_TOKEN', tokenInput.value.trim());
+    alert('Token 已儲存');
+  };
+
+  async function api(path, opt={}){
+    const headers = Object.assign({'Content-Type':'application/json'}, opt.headers || {});
+    const token = (localStorage.getItem('ADMIN_TOKEN') || '').trim();
+    if (token) headers['x-admin-token'] = token;
+    const res = await fetch(path, { ...opt, headers, credentials: 'include' });
+    let data = null;
+    try { data = await res.json(); } catch(e) {}
+    if (!res.ok) {
+      if (res.status === 401) throw new Error('Unauthorized：請確認 Admin Token 是否正確，或重新儲存後再試');
+      throw new Error((data && data.error) || `HTTP ${res.status}`);
+    }
+    return data;
+  }
+
+  const sel = id => document.getElementById(id);
+  const T = sel('prodTable').querySelector('tbody');
+  const editSelect = sel('edit_id');
+
+  function nt(n){ return new Intl.NumberFormat('zh-Hant',{style:'currency',currency:'TWD',maximumFractionDigits:0}).format(n) }
+
+  let PRODUCTS = [];
+  let P_MAP = new Map();
+  let editChangeBound = false;
+
+  function fillEditInputsFromCurrent(){
+    const id = editSelect.value;
+    const p = P_MAP.get(id);
+    if (!p) return;
+    sel('edit_name').value = p.name || '';
+    sel('edit_img').value  = p.img  || '';
+    sel('edit_price').value = p.price ?? '';
+    sel('edit_stock').value = p.stock ?? '';
+  }
+
+  async function loadProducts(){
+    const {products} = await api('/api/products');
+    PRODUCTS = products || [];
+    P_MAP = new Map(PRODUCTS.map(p => [p.id, p]));
+
+    // 填表
+    T.innerHTML = '';
+    PRODUCTS.forEach(p=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><code>${p.id}</code></td>
+        <td>${p.name}</td>
+        <td>${p.img||''}</td>
+        <td class="right">${nt(p.price)}</td>
+        <td class="right">${p.stock}</td>`;
+      T.appendChild(tr);
+    });
+
+    // 填下拉
+    const prev = editSelect.value;
+    editSelect.innerHTML = '';
+    PRODUCTS.forEach(p=>{
+      const o = document.createElement('option');
+      o.value = p.id; o.textContent = `${p.id}｜${p.name}`;
+      editSelect.appendChild(o);
+    });
+    // 還原選取，否則選第一個
+    if (prev && P_MAP.has(prev)) editSelect.value = prev;
+    if (!prev && PRODUCTS.length) editSelect.value = PRODUCTS[0].id;
+
+    // 綁定一次 change 事件
+    if (!editChangeBound){
+      editSelect.addEventListener('change', fillEditInputsFromCurrent);
+      editChangeBound = true;
+    }
+    // 載入完成後，自動把目前資料帶進輸入框
+    fillEditInputsFromCurrent();
+  }
+
+  // 事件
+  document.getElementById('refresh').onclick = loadProducts;
+  document.getElementById('btnResetFromCurrent').onclick = fillEditInputsFromCurrent;
+
+  document.getElementById('btnCreate').onclick = async () => {
+    const payload = {
+      id: sel('new_id').value.trim(),
+      name: sel('new_name').value.trim(),
+      img: sel('new_img').value.trim(),
+      price: Number(sel('new_price').value),
+      stock: Number(sel('new_stock').value)
+    };
+    sel('msgCreate').textContent = '處理中...';
+    try{
+      await api('/api/admin/products',{ method:'POST', body: JSON.stringify(payload) });
+      sel('msgCreate').textContent = '✅ 上架完成';
+      // 清空表單
+      sel('new_id').value = '';
+      sel('new_name').value = '';
+      sel('new_img').value = '';
+      sel('new_price').value = '100';
+      sel('new_stock').value = '0';
+      await loadProducts();
+    }catch(e){
+      sel('msgCreate').textContent = '❌ ' + e.message;
+    }
+  };
+
+  document.getElementById('btnUpdate').onclick = async () => {
+    const id = sel('edit_id').value;
+    const body = {};
+    const name = sel('edit_name').value.trim();
+    const img  = sel('edit_img').value.trim();
+    const price = sel('edit_price').value;
+    const stock = sel('edit_stock').value;
+
+    // 直接把目前欄位送出（你可以改成只送變更的欄位）
+    if (name !== '') body.name = name;
+    if (img  !== '') body.img  = img;
+    if (price !== '') body.price = Number(price);
+    if (stock !== '') body.stock = Number(stock);
+
+    if (Object.keys(body).length === 0) {
+      sel('msgUpdate').textContent = '請至少填一個要更新的欄位';
+      return;
+    }
+    sel('msgUpdate').textContent = '處理中...';
+    try{
+      await api(`/api/admin/products/${encodeURIComponent(id)}`, { method:'PATCH', body: JSON.stringify(body) });
+      sel('msgUpdate').textContent = '✅ 更新完成';
+      await loadProducts(); // 更新後重新載入，並自動帶入目前資料
+    }catch(e){
+      sel('msgUpdate').textContent = '❌ ' + e.message;
+    }
+  };
+
+  // 啟動
+  loadProducts().catch(e=>{
+    alert('載入商品失敗：' + e.message + '\n請確認後端有跑，且 Token 正確（若有啟用）。');
+  });
+</script>
+</body>
+</html>

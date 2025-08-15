@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>付款完成 / 訂單查詢</title>
+  <style>
+    :root { --bg:#0f0f11; --card:#16171a; --muted:#a7aab0; --text:#e9eaee; --line:#2a2d33; }
+    *{box-sizing:border-box}
+    body{margin:0;background:#0f1115;color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",Roboto}
+    .wrap{max-width:900px;margin:0 auto;padding:20px}
+    .card{background:#16171a;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+    h1{margin:0 0 8px;font-size:22px}
+    .muted{color:var(--muted);font-size:13px}
+    input,button{padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#1b1e24;color:var(--text)}
+    button{cursor:pointer;font-weight:700}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left}
+    .right{text-align:right}
+    .toolbar{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+    .pill{padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:#1e2025}
+    details{background:#121318;border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:8px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>付款結果 / 訂單查詢</h1>
+      <div class="muted">若剛完成付款，狀態可能仍顯示 <code>pending</code>，數秒後會由背景回傳（ReturnURL）更新為 <code>paid</code>。</div>
+      <div class="toolbar">
+        <span class="pill">主機：<code id="host"></code></span>
+        <label class="pill" style="display:flex;gap:8px;align-items:center;">
+          <span>Admin Token</span>
+          <input id="token" placeholder="x-admin-token" style="width:240px;background:#101218"/>
+          <button id="saveToken" style="width:auto">儲存</button>
+        </label>
+        <button id="reload">重新整理</button>
+        <a href="/order.html" style="text-decoration:none;"><button>回到購物頁</button></a>
+      </div>
+      <div id="tip" class="muted">提示：若沒看到新訂單，請點「重新整理」。</div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin:0 0 8px;">訂單列表</h2>
+      <table id="orders">
+        <thead>
+          <tr><th>訂單ID</th><th>TradeNo</th><th>金額</th><th>狀態</th><th>建立時間</th><th></th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="muted" id="msg"></div>
+    </div>
+  </div>
+
+<script>
+  const host = location.origin;
+  document.getElementById('host').textContent = host;
+  const tokenInput = document.getElementById('token');
+  tokenInput.value = localStorage.getItem('ADMIN_TOKEN') || '';
+  document.getElementById('saveToken').onclick = () => {
+    localStorage.setItem('ADMIN_TOKEN', tokenInput.value.trim());
+    alert('Token 已儲存');
+  };
+
+  function nt(n){ return new Intl.NumberFormat('zh-Hant',{style:'currency',currency:'TWD',maximumFractionDigits:0}).format(n) }
+  async function api(path, opt={}){
+    const headers = Object.assign({'Content-Type':'application/json'}, opt.headers || {});
+    const token = (localStorage.getItem('ADMIN_TOKEN') || '').trim();
+    if (token) headers['x-admin-token'] = token;
+    const res = await fetch(path, { ...opt, headers });
+    let data = null; try { data = await res.json(); } catch(e){}
+    if (!res.ok) throw new Error((data && data.error) || `HTTP ${res.status}`);
+    return data;
+  }
+
+  async function load(){
+    const T = document.querySelector('#orders tbody');
+    document.getElementById('msg').textContent = '讀取中...';
+    try{
+      const {orders} = await api('/api/admin/orders');
+      T.innerHTML = '';
+      orders.forEach(o=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><code>${o.id}</code></td>
+          <td>${o.trade_no || ''}</td>
+          <td>${nt(o.total)}</td>
+          <td>${o.status}</td>
+          <td>${o.created_at || ''}</td>
+          <td><button data-id="${o.id}">查看明細</button></td>`;
+        T.appendChild(tr);
+      });
+      // 綁定查看明細
+T.querySelectorAll('button[data-id]').forEach(btn=>{
+  btn.onclick = async ()=>{
+    const id = btn.dataset.id;
+    const tr = btn.closest('tr');
+
+    // 收起其他訂單的已展開明細
+    T.querySelectorAll('tr.order-details').forEach(r=>r.remove());
+
+    try{
+      const {items} = await api(`/api/admin/orders/${encodeURIComponent(id)}/items`);
+
+      // 建立一列 (tr) 佔滿整個表格寬度，將明細表放入單一儲存格中
+      const row = document.createElement('tr');
+      row.className = 'order-details';
+      row.setAttribute('data-for', id);
+
+      const td = document.createElement('td');
+      td.colSpan = 6; // 對應上層表頭的欄位數量
+      td.innerHTML = `
+        <div style="padding:8px 10px;background:#121318;border:1px solid var(--line);border-radius:10px">
+          <table style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr><th>商品ID</th><th>名稱</th><th>數量</th><th>單價</th><th class="right">小計</th></tr>
+            </thead>
+            <tbody>
+              ${items.map(it => `
+                <tr>
+                  <td>${it.product_id}</td>
+                  <td>${it.name||''}</td>
+                  <td>${it.quantity}</td>
+                  <td>${nt(it.price)}</td>
+                  <td class="right">${nt(it.line_total)}</td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>`;
+
+      row.appendChild(td);
+      tr.after(row);
+    }catch(e){
+      alert('讀取明細失敗：' + e.message);
+    }
+  };
+});
+
+      document.getElementById('msg').textContent = orders.length ? '' : '目前沒有訂單';
+    }catch(e){
+      document.getElementById('msg').textContent = '❌ ' + e.message + '（請確認 Token 正確 / 後端已啟動）';
+    }
+  }
+
+  document.getElementById('reload').onclick = load;
+  load();
+</script>
+</body>
+</html>

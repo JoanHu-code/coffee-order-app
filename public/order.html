@@ -25,40 +25,42 @@
     .menu-panel.active{display:block}
     .menu-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
     .menu-item{background:#191b20;border:1px solid #2a2d33;border-radius:14px;padding:12px}
-    .menu-item .line{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .menu-item .price{font-weight:800}
-    .menu-item .buyline{display:flex;gap:8px;align-items:center;margin-top:8px}
-    .menu-item input[type=number]{width:80px;text-align:center}
+    .menu-item img{width:100%;border-radius:12px;margin-bottom:8px;display:block}
+    .name{font-weight:800}
+    .muted{color:var(--muted)}
+    .stock{font-size:12px;color:var(--muted)}
+    .menu-item input[type=number]{text-align:center}
 
-    /* 調整數量控制換行 */
-   .qty {
-        display: flex;
-        flex-direction: row; /* 水平排列 */
-        justify-content: center; /* 按鈕與輸入框置中 */
-        gap: 4px;
-        width: 100%; /* 占滿整行 */
-        margin-top: 8px;
-      }
-      .qty button{
-        flex: 1; /* 三個元件平均分配寬度 */
-      }
-       .qty input {
-        flex: 5; /* 三個元件平均分配寬度 */
-      }
     .top{display:flex;gap:12px;align-items:center}
-    .img{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,#2b2e35,#1f2228);display:grid;place-items:center;font-size:26px}
     .meta{flex:1}
-    .bottom{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
 
+    /* 數量控制：水平且占整行 */
+    .qty{
+      display:flex;
+      width:100%;
+      gap:6px;
+      margin-top:8px;
+      justify-content:center;
+    }
+    .qty button, .qty input{
+      flex:1; min-width:0;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a2d33;
+      background:#1b1e24;
+      color:var(--text);
+    }
+    .qty input{ max-width:120px; }
+
+    .bottom{margin-top:8px}
+    .bottom .btn-add{ width:100%; }
     button,.btn{padding:8px 12px;border-radius:12px;border:1px solid #2a2d33;background:#20232a;color:var(--text);cursor:pointer;font-weight:600;transition:all .15s ease}
     .btn-add{background:#1d2b21;border-color:#2d4533}
     .btn-add:hover{background:#243628}
+    .btn-add[disabled]{opacity:.6; cursor:not-allowed;}
     .btn-danger{background:#2b1f1f;border-color:#4a2a2a;color:#ffb3b3}
     .btn-danger:hover{background:#3a2525}
-      /* 讓加入按鈕占滿一整行 */
-      .bottom .btn-add {
-        width: 100%;
-      }
+
     .cart-list{display:grid;gap:10px;margin:10px 0 16px}
     .cart-row{display:grid;grid-template-columns:1fr auto auto auto;align-items:center;gap:10px}
     .totals{display:grid;gap:6px}
@@ -76,7 +78,7 @@
 <body>
   <div class="container">
     <header>
-      <div class="title">☕ 咖啡訂購</div>
+      <div class="title">☕ 一頁式咖啡訂購</div>
       <div class="pill" id="cart-pill">購物車：0 件，NT$ 0</div>
     </header>
 
@@ -178,17 +180,6 @@
     renderCart(summary);
   }
 
-  function productEmoji(id) {
-    switch(id){
-      case 'espresso': return '☕';
-      case 'americano': return '🥤';
-      case 'latte': return '🥛';
-      case 'cappuccino': return '🍵';
-      case 'mocha': return '🍫';
-      case 'coldbrew': return '🧊';
-      default: return '☕';
-    }
-  }
   function groupCategoryById(id){
     if(id.startsWith('gift_')) return 'gift';
     if(id.startsWith('drip_')) return 'drip';
@@ -199,43 +190,52 @@
   function renderPanel(listEl, products){
     listEl.innerHTML='';
     products.forEach(p=>{
-      console.log(p)
       const item = document.createElement('div');
       item.className='menu-item';
-      // 這裡原本寫成 div.innerHTML，導致錯誤；已改為 item.innerHTML
+      const soldOut = (p.stock || 0) <= 0;
+
       item.innerHTML = `
-      <img src="${p.img}" alt="${p.name}" style="width:100%;border-radius:10px;margin-bottom:8px;">
+        <img src="${p.img}" alt="${p.name}">
         <div class="top">
-          <div class="img">${productEmoji(p.id)}</div>
           <div class="meta">
             <div class="name">${p.name}</div>
             <div class="muted">NT$ ${p.price}</div>
+            <div class="stock">${soldOut ? '庫存：補貨中' : '庫存：' + p.stock}</div>
           </div>
-
         </div>
-          <div class="qty">
-            <button type="button" data-delta="-1">-</button>
-            <input type="number" value="1" min="1" step="1" style="width:64px;text-align:center;" />
-            <button type="button" data-delta="1">+</button>
-          </div>
+        <div class="qty">
+          <button type="button" data-delta="-1">-</button>
+          <input type="number" value="1" min="1" step="1" ${soldOut ? 'disabled' : ''}/>
+          <button type="button" data-delta="1">+</button>
+        </div>
         <div class="bottom">
-          <button class="btn btn-add" data-add="${p.id}">加入</button>
+          <button class="btn btn-add" data-add="${p.id}" ${soldOut ? 'disabled' : ''}>${soldOut ? '缺貨' : '加入'}</button>
         </div>`;
 
       const qtyWrap = item.querySelector('.qty');
       const qtyInput = qtyWrap.querySelector('input[type=number]');
-      qtyWrap.querySelectorAll('button[data-delta]').forEach(btn=>{
-        btn.addEventListener('click',()=>{
-          const d = Number(btn.dataset.delta||0);
-          qtyInput.value = Math.max(1, Number(qtyInput.value||1) + d);
+      if (!soldOut) {
+        // 設定最大可買數量（不硬性在 input 上限，仍以後端校驗為準）
+        qtyWrap.querySelectorAll('button[data-delta]').forEach(btn=>{
+          btn.addEventListener('click',()=>{
+            const d = Number(btn.dataset.delta||0);
+            const next = Math.max(1, Number(qtyInput.value||1) + d);
+            qtyInput.value = next;
+          });
         });
-      });
 
-      item.querySelector('.btn-add').addEventListener('click', async ()=>{
-        const quantity = Math.max(1, Number(qtyInput.value||1));
-        try{ await api('/api/cart/add',{method:'POST',body:JSON.stringify({productId:p.id,quantity})}); await refreshCart(); }
-        catch(e){ alert(e.message); }
-      });
+        item.querySelector('.btn-add').addEventListener('click', async ()=>{
+          const quantity = Math.max(1, Number(qtyInput.value||1));
+          try{
+            if (quantity > p.stock) {
+              alert(`庫存不足，剩餘 ${p.stock} 件`);
+              return;
+            }
+            await api('/api/cart/add',{method:'POST',body:JSON.stringify({productId:p.id,quantity})});
+            await refreshCart();
+          } catch(e){ alert(e.message); }
+        });
+      }
       listEl.appendChild(item);
     });
   }
@@ -251,16 +251,19 @@
     }));
   }
 
+  async function loadAndRenderProducts(){
+    const { products } = await api('/api/products');
+    const groups = { gift:[], drip:[], beans:[], others:[] };
+    products.forEach(p=>{ groups[groupCategoryById(p.id)].push(p); });
+    renderPanel(el('#list-gift'), groups.gift);
+    renderPanel(el('#list-drip'), groups.drip);
+    renderPanel(el('#list-beans'), groups.beans);
+  }
+
   async function main(){
     wireTabs();
-    // 從後端載入商品，依 id 前綴分組
     try{
-      const { products } = await api('/api/products');
-      const groups = { gift:[], drip:[], beans:[], others:[] };
-      products.forEach(p=>{ groups[groupCategoryById(p.id)].push(p); });
-      renderPanel(el('#list-gift'), groups.gift);
-      renderPanel(el('#list-drip'), groups.drip);
-      renderPanel(el('#list-beans'), groups.beans);
+      await loadAndRenderProducts();
     }catch(e){
       console.error(e);
       alert('載入商品失敗：'+e.message+'\n請確認以 http://localhost:3000/order.html 開啟，且 /api/products 可用。');

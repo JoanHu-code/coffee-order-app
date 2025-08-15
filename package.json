@@ -8,6 +8,7 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
+    "better-sqlite3": "^12.2.0",
     "ecpay_aio_nodejs": "^1.2.2",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
