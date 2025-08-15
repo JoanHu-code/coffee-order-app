@@ -199,10 +199,12 @@
   function renderPanel(listEl, products){
     listEl.innerHTML='';
     products.forEach(p=>{
+      console.log(p)
       const item = document.createElement('div');
       item.className='menu-item';
       // 這裡原本寫成 div.innerHTML，導致錯誤；已改為 item.innerHTML
       item.innerHTML = `
+      <img src="${p.img}" alt="${p.name}" style="width:100%;border-radius:10px;margin-bottom:8px;">
         <div class="top">
           <div class="img">${productEmoji(p.id)}</div>
           <div class="meta">
