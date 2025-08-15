@@ -20,12 +20,22 @@ const ECPAY_OPTIONS = {
 
 // Simple in-memory catalog (could be swapped out for a DB)
 const PRODUCTS = [
-  { id: 'espresso', name: '濃縮咖啡 Espresso', price: 70 },
-  { id: 'americano', name: '美式咖啡 Americano', price: 80 },
-  { id: 'latte', name: '拿鐵 Latte', price: 120 },
-  { id: 'cappuccino', name: '卡布奇諾 Cappuccino', price: 120 },
-  { id: 'mocha', name: '摩卡 Mocha', price: 130 },
-  { id: 'coldbrew', name: '冷萃 Cold Brew', price: 140 }
+  // 禮盒
+  { id: 'gift_lux_12',  name: '精裝咖啡禮盒（12入）', price: 800 },
+  { id: 'gift_lux_20',  name: '精裝咖啡禮盒（20入）', price: 1200 },
+  { id: 'gift_std_12',  name: '平裝咖啡禮盒（12入）', price: 680 },
+  { id: 'gift_std_20',  name: '平裝咖啡禮盒（20入）', price: 1080 },
+
+  // 掛耳
+  { id: 'drip_special', name: '達味特調 Dawit Special',        price: 50 },
+  { id: 'drip_djimmah', name: '日曬吉瑪 Djimmah',               price: 50 },
+  { id: 'drip_yirg',    name: '水洗耶加雪菲 Yirgacheffe',       price: 50 },
+  { id: 'drip_yirg_cl', name: '經典耶加雪菲 Classic Yirgacheffe', price: 50 },
+
+  // 烘豆
+  { id: 'beans_gesha_100', name: '衣索匹亞藝伎 Gesha 100g', price: 700 },
+  { id: 'beans_yirg_200',  name: '水洗耶加雪菲 200g',       price: 500 },
+  { id: 'beans_djim_200',  name: '日曬吉瑪 200g',            price: 400 },
 ];
 
 app.use(express.json());

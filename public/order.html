@@ -3,105 +3,51 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>咖啡訂購</title>
+  <title>咖啡訂購｜Dawit's Coffee</title>
   <style>
-    :root {
-      --bg: #0f0f11;
-      --card: #16171a;
-      --muted: #a7aab0;
-      --text: #e9eaee;
-      --accent: #8bdc6e;
-      --accent-2: #7ab7ff;
-      --danger: #ff6b6b;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, "PingFang TC", "Microsoft JhengHei", Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: radial-gradient(1200px 600px at 20% 0%, #14161a 0%, var(--bg) 70%);
-      color: var(--text);
-    }
-    .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
-    header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 16px; }
-    .title { font-size: 28px; font-weight: 800; letter-spacing: 0.5px; }
-    .pill { background: #1e2025; border: 1px solid #2a2d33; padding: 6px 12px; border-radius: 999px; color: var(--muted); }
-    .grid { display: grid; grid-template-columns: 1fr 360px; gap: 16px; }
-    .card { background: var(--card); border: 1px solid #2a2d33; border-radius: 16px; padding: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
-    .products { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-    .product { display: flex; gap: 12px; align-items: center; background: #191b20; border: 1px solid #2a2d33; padding: 10px; border-radius: 14px; }
-    .product .img {
-      width: 56px; height: 56px; border-radius: 12px; background: linear-gradient(135deg,#2b2e35,#1f2228);
-      display: grid; place-items: center; font-size: 26px;
-    }
-    .product .meta { flex: 1; }
-    .name { font-weight: 700; }
-    .muted { color: var(--muted); font-size: 13px; }
-    .price { font-weight: 700; }
-    .qty { display: flex; align-items: center; gap: 6px; }
-    button, .btn {
-      padding: 8px 12px; border-radius: 12px; border: 1px solid #2a2d33; background: #20232a; color: var(--text);
-      cursor: pointer; font-weight: 600;
-    }
-    .btn-add { background: #1d2b21; border-color: #2d4533; }
-    .btn-add:hover { background: #243628; }
-    .btn-danger { background: #2b1f1f; border-color: #4a2a2a; color: #ffb3b3; }
-    .btn-danger:hover { background: #3a2525; }
-    .cart-list { display: grid; gap: 10px; margin: 10px 0 16px; }
-    .cart-row { display: grid; grid-template-columns: 1fr auto auto auto; align-items: center; gap: 10px; }
-    .totals { display: grid; gap: 6px; }
-    .totals .row { display: flex; justify-content: space-between; }
-    .total { font-size: 18px; font-weight: 800; }
-    .checkout { display: grid; gap: 8px; }
-    input, textarea {
-      width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid #2a2d33; background: #1b1e24; color: var(--text);
-    }
-    .footer { margin-top: 14px; display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 13px; }
-        .product {
-    display: flex;
-    flex-direction: column; /* 改成上下排列 */
-    gap: 8px;
-    align-items: stretch;
-    background: #191b20;
-    border: 1px solid #2a2d33;
-    padding: 10px;
-    border-radius: 14px;
-  }
+    :root { --bg:#0f0f11; --card:#16171a; --muted:#a7aab0; --text:#e9eaee; --accent:#8bdc6e; --accent-2:#7ab7ff; --danger:#ff6b6b; }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Noto Sans,"PingFang TC","Microsoft JhengHei",Arial; background:radial-gradient(1200px 600px at 20% 0%, #14161a 0%, var(--bg) 70%); color:var(--text)}
+    a{color:inherit}
+    .container{max-width:1100px;margin:0 auto;padding:24px}
+    header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:16px}
+    .title{font-size:28px;font-weight:800;letter-spacing:.5px}
+    .pill{background:#1e2025;border:1px solid #2a2d33;padding:6px 12px;border-radius:999px;color:var(--muted)}
 
-  .product .top {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-  }
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:16px}
+    .card{background:var(--card);border:1px solid #2a2d33;border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 
-  .product .meta {
-    flex: 1;
-  }
+    /* Tabs + menu cards */
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+    .tab{padding:8px 12px;border-radius:12px;border:1px solid #2a2d33;background:#1e2025;color:#cfd2d8;font-weight:700;cursor:pointer}
+    .tab.active{background:#2a2d33;color:#fff}
+    .menu-panel{display:none}
+    .menu-panel.active{display:block}
+    .menu-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .menu-item{background:#191b20;border:1px solid #2a2d33;border-radius:14px;padding:12px}
+    .menu-item .line{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .menu-item .price{font-weight:800}
+    .menu-item .buyline{display:flex;gap:8px;align-items:center;margin-top:8px}
+    .menu-item input[type=number]{width:80px;text-align:center}
 
-  .product .bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: auto; /* 把按鈕推到最底 */
-  }
-    .product .bottom .btn-add {
-    width: 100%;
-    padding: 10px;
-    font-weight: 700;
-    text-align: center;
-  }
-  input[type=number]::-webkit-inner-spin-button,
-  input[type=number]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  input[type=number] {
-    -moz-appearance: textfield; /* Firefox */
-  }
-   @media (max-width: 900px) {
-    .grid { grid-template-columns: 1fr; }
-    .products { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
+    button,.btn{padding:8px 12px;border-radius:12px;border:1px solid #2a2d33;background:#20232a;color:var(--text);cursor:pointer;font-weight:600;transition:all .15s ease}
+    .btn-add{background:#1d2b21;border-color:#2d4533}
+    .btn-add:hover{background:#243628}
+    .btn-danger{background:#2b1f1f;border-color:#4a2a2a;color:#ffb3b3}
+    .btn-danger:hover{background:#3a2525}
 
+    .cart-list{display:grid;gap:10px;margin:10px 0 16px}
+    .cart-row{display:grid;grid-template-columns:1fr auto auto auto;align-items:center;gap:10px}
+    .totals{display:grid;gap:6px}
+    .totals .row{display:flex;justify-content:space-between}
+    .total{font-size:18px;font-weight:800}
+
+    .checkout{display:grid;gap:8px}
+    input,textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #2a2d33;background:#1b1e24;color:var(--text)}
+
+    .footer{margin-top:14px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}
+
+    @media (max-width:900px){.grid{grid-template-columns:1fr}.menu-list{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -112,13 +58,25 @@
     </header>
 
     <div class="grid">
-      <!-- Left: Products -->
+      <!-- Left: Products (Tabs, 從後端載入) -->
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <div style="font-weight:800;">咖啡品項</div>
+          <div style="font-weight:800;">商品選購</div>
           <div class="muted">滿 NT$500 免運</div>
         </div>
-        <div id="products" class="products"></div>
+
+        <!-- tabs -->
+        <div class="tabs" role="tablist" aria-label="菜單分類">
+          <button class="tab active" data-target="#panel-gift" role="tab" aria-selected="true">禮盒</button>
+          <button class="tab" data-target="#panel-drip" role="tab" aria-selected="false">掛耳</button>
+          <button class="tab" data-target="#panel-beans" role="tab" aria-selected="false">烘豆</button>
+        </div>
+
+        <div class="menu-panels">
+          <div id="panel-gift" class="menu-panel active" role="tabpanel"><div class="menu-list" id="list-gift"></div></div>
+          <div id="panel-drip" class="menu-panel" role="tabpanel"><div class="menu-list" id="list-drip"></div></div>
+          <div id="panel-beans" class="menu-panel" role="tabpanel"><div class="menu-list" id="list-beans"></div></div>
+        </div>
       </div>
 
       <!-- Right: Cart + Checkout -->
@@ -127,13 +85,9 @@
           <div style="font-weight:800;">我的購物車</div>
           <button id="btnClear" class="btn btn-danger">清空</button>
         </div>
-
         <div id="cartList" class="cart-list"></div>
-
         <div class="totals" id="totals"></div>
-
         <hr style="border-color:#2a2d33; margin: 12px 0;">
-
         <div class="checkout">
           <div style="font-weight:800;">收件資訊</div>
           <input id="name" placeholder="收件人*" />
@@ -148,153 +102,128 @@
 
     <div class="footer">
       <div>Made with Node.js + Express (Session Cart)</div>
-      <a class="muted" href="https://example.com" target="_blank" rel="noreferrer">示範頁面（本機執行）</a>
+      <a class="muted" href="/" rel="noreferrer">回首頁</a>
     </div>
   </div>
 
 <script>
-  const nt = n => new Intl.NumberFormat('zh-Hant', { style: 'currency', currency: 'TWD', maximumFractionDigits: 0 }).format(n);
-  const el = (sel) => document.querySelector(sel);
+  const nt = n => new Intl.NumberFormat('zh-Hant',{style:'currency',currency:'TWD',maximumFractionDigits:0}).format(n);
+  const el = (s) => document.querySelector(s);
+  const els = (s) => Array.from(document.querySelectorAll(s));
 
-  async function api(url = '', opts = {}) {
-    const res = await fetch(url, { headers: { 'Content-Type': 'application/json' }, ...opts });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.error || 'Request error');
-    }
+  async function api(url='', opts={}){
+    const res = await fetch(url,{headers:{'Content-Type':'application/json'}, ...opts});
+    if(!res.ok){ const data = await res.json().catch(()=>({})); throw new Error(data.error||'Request error'); }
     return res.json();
   }
 
-  function productEmoji(id) {
-    switch(id){
-      case 'espresso': return '☕'; // 小杯濃縮
-      case 'americano': return '🥤'; // 冰或熱美式
-      case 'latte': return '🥛';
-      case 'cappuccino': return '🍵'; // 奶泡感
-      case 'mocha': return '🍫';
-      case 'coldbrew': return '🧊';
-      default: return '☕';
-    }
-  }
-
-  function renderProducts(list) {
-    const box = el('#products');
-    box.innerHTML = '';
-    list.forEach(p => {
-      const div = document.createElement('div');
-      div.className = 'product';
-      div.innerHTML = `
-      <div class="top">
-        <div class="img">${productEmoji(p.id)}</div>
-        <div class="meta">
-          <div class="name">${p.name}</div>
-          <div class="muted">NT$ ${p.price}</div>
-        </div>
-        <div class="qty">
-          <button data-pid="${p.id}" data-delta="-1">-</button>
-          <input type="number" value="1" min="1" step="1" style="width:64px;text-align:center;" />
-          <button data-pid="${p.id}" data-delta="1">+</button>
-        </div>
-      </div>
-      <div class="bottom">
-        <button class="btn btn-add" data-add="${p.id}">加入</button>
-      </div>
-    `;
-      const [minus, qtyInput, plus] = div.querySelectorAll('.qty > *');
-      minus.addEventListener('click', () => {
-        qtyInput.value = Math.max(1, Number(qtyInput.value || 1) - 1);
-      });
-      plus.addEventListener('click', () => {
-        qtyInput.value = Number(qtyInput.value || 1) + 1;
-      });
-      div.querySelector('[data-add]').addEventListener('click', async () => {
-        const quantity = Number(qtyInput.value || 1);
-        await api('/api/cart/add', { method: 'POST', body: JSON.stringify({ productId: p.id, quantity }) });
-        await refreshCart();
-      });
-      box.appendChild(div);
-    });
-  }
-
-  function renderCart(summary) {
+  function renderCart(summary){
     const list = el('#cartList');
     const pill = el('#cart-pill');
     const totals = el('#totals');
-    list.innerHTML = '';
-
-    let count = 0;
-    summary.items.forEach(item => { count += item.quantity });
-
+    list.innerHTML='';
+    let count=0; summary.items.forEach(it=>count+=it.quantity);
     pill.textContent = `購物車：${count} 件，${nt(summary.total)}`;
-
-    if (summary.items.length === 0) {
+    if(summary.items.length===0){
       list.innerHTML = '<div class="muted">購物車是空的</div>';
-    } else {
-      summary.items.forEach(item => {
+    }else{
+      summary.items.forEach(item=>{
         const row = document.createElement('div');
-        row.className = 'cart-row';
+        row.className='cart-row';
         row.innerHTML = `
           <div>${item.name}</div>
           <div class="muted">x</div>
           <input type="number" min="0" step="1" value="${item.quantity}" style="width:64px;text-align:center;" />
-          <div class="price">${nt(item.lineTotal)}</div>
-        `;
-        const qtyInput = row.querySelector('input');
-        qtyInput.addEventListener('change', async () => {
-          const q = Math.max(0, Number(qtyInput.value || 0));
-          try {
-            await api('/api/cart/update', { method: 'POST', body: JSON.stringify({ productId: item.id, quantity: q }) });
-            await refreshCart();
-          } catch (e) {
-            alert(e.message);
-          }
+          <div class="price">${nt(item.lineTotal)}</div>`;
+        const qty = row.querySelector('input');
+        qty.addEventListener('change', async ()=>{
+          const q = Math.max(0, Number(qty.value||0));
+          try{ await api('/api/cart/update',{method:'POST',body:JSON.stringify({productId:item.id,quantity:q})}); await refreshCart(); }
+          catch(e){ alert(e.message); }
         });
         list.appendChild(row);
       });
     }
     totals.innerHTML = `
       <div class="row"><div>小計</div><div>${nt(summary.subtotal)}</div></div>
-      <div class="row"><div>運費</div><div>${summary.shipping === 0 ? '免運' : nt(summary.shipping)}</div></div>
-      <div class="row total"><div>總計</div><div>${nt(summary.total)}</div></div>
-    `;
+      <div class="row"><div>運費</div><div>${summary.shipping===0?'免運':nt(summary.shipping)}</div></div>
+      <div class="row total"><div>總計</div><div>${nt(summary.total)}</div></div>`;
   }
 
-  async function refreshCart() {
+  async function refreshCart(){
     const summary = await api('/api/cart');
     renderCart(summary);
   }
 
-  async function main() {
+  function groupCategoryById(id){
+    if(id.startsWith('gift_')) return 'gift';
+    if(id.startsWith('drip_')) return 'drip';
+    if(id.startsWith('beans_')) return 'beans';
+    return 'others';
+  }
+
+  function renderPanel(listEl, products){
+    listEl.innerHTML='';
+    products.forEach(p=>{
+      const item = document.createElement('div');
+      item.className='menu-item';
+      item.innerHTML = `
+        <div class="line"><h4>${p.name}</h4><span class="price">NT$ ${p.price}</span></div>
+        <div class="buyline">
+          <input type="number" min="1" step="1" value="1" />
+          <button class="btn-add" data-add="${p.id}">加入</button>
+        </div>`;
+      const qtyInput = item.querySelector('input[type=number]');
+      item.querySelector('.btn-add').addEventListener('click', async ()=>{
+        const quantity = Math.max(1, Number(qtyInput.value||1));
+        try{ await api('/api/cart/add',{method:'POST',body:JSON.stringify({productId:p.id,quantity})}); await refreshCart(); }
+        catch(e){ alert(e.message); }
+      });
+      listEl.appendChild(item);
+    });
+  }
+
+  function wireTabs(){
+    const tabs = els('.tab');
+    tabs.forEach(t=>t.addEventListener('click',()=>{
+      tabs.forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      els('.menu-panel').forEach(p=>p.classList.remove('active'));
+      const target = document.querySelector(t.dataset.target);
+      if(target) target.classList.add('active');
+    }));
+  }
+
+  async function main(){
+    wireTabs();
+    // 從後端載入商品，依 id 前綴分組
     const { products } = await api('/api/products');
-    renderProducts(products);
+    console.log(products)
+    const groups = { gift:[], drip:[], beans:[], others:[] };
+    products.forEach(p=>{ groups[groupCategoryById(p.id)].push(p); });
+
+    renderPanel(el('#list-gift'), groups.gift);
+    renderPanel(el('#list-drip'), groups.drip);
+    renderPanel(el('#list-beans'), groups.beans);
+
     await refreshCart();
 
-    el('#btnClear').addEventListener('click', async () => {
-      await api('/api/cart/clear', { method: 'POST' });
-      await refreshCart();
-    });
+    el('#btnClear').addEventListener('click', async ()=>{ await api('/api/cart/clear',{method:'POST'}); await refreshCart(); });
 
-      el('#btnCheckout').addEventListener('click', async () => {
-        const name = el('#name').value.trim();
-        const phone = el('#phone').value.trim();
-        const address = el('#address').value.trim();
-        const notes = el('#notes').value.trim();
-        el('#message').textContent = '建立訂單中…';
-        try {
-          const data = await api('/api/checkout', { method: 'POST', body: JSON.stringify({ name, phone, address, notes }) });
-          el('#message').textContent = `✅ ${data.message}（訂單編號 ${data.orderId}）`;
-          // 導向後端的 /pay/:orderId（由後端產生綠界表單並自動送出）
-          if (data.redirect) {
-            window.location.href = data.redirect;
-            return; // 後續不執行
-          }
-        } catch (e) {
-          el('#message').textContent = '❌ ' + e.message;
-        }
-      });
+    el('#btnCheckout').addEventListener('click', async ()=>{
+      const name = el('#name').value.trim();
+      const phone = el('#phone').value.trim();
+      const address = el('#address').value.trim();
+      const notes = el('#notes').value.trim();
+      el('#message').textContent='建立訂單中…';
+      try{
+        const data = await api('/api/checkout',{method:'POST',body:JSON.stringify({name,phone,address,notes})});
+        el('#message').textContent = `✅ ${data.message}（訂單編號 ${data.orderId}）`;
+        if(data.redirect){ window.location.href = data.redirect; }
+      }catch(e){ el('#message').textContent='❌ '+e.message; }
+    });
   }
   main();
 </script>
-
 </body>
 </html>
