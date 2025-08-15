@@ -1,300 +1,285 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>一頁式咖啡訂購</title>
+  <title>Dawit's Coffee — 單頁式網站</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #0f0f11;
-      --card: #16171a;
-      --muted: #a7aab0;
-      --text: #e9eaee;
-      --accent: #8bdc6e;
-      --accent-2: #7ab7ff;
-      --danger: #ff6b6b;
+    :root{
+      --brand:#6b4f3b; --brand-600:#5b422f; --accent:#c7a17a; --ink:#1e1e1e; --bg:#fffdf9; --header-h:72px; --radius:16px; --shadow:0 10px 30px rgba(0,0,0,.08);
     }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, "PingFang TC", "Microsoft JhengHei", Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: radial-gradient(1200px 600px at 20% 0%, #14161a 0%, var(--bg) 70%);
-      color: var(--text);
-    }
-    .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
-    header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 16px; }
-    .title { font-size: 28px; font-weight: 800; letter-spacing: 0.5px; }
-    .pill { background: #1e2025; border: 1px solid #2a2d33; padding: 6px 12px; border-radius: 999px; color: var(--muted); }
-    .grid { display: grid; grid-template-columns: 1fr 360px; gap: 16px; }
-    .card { background: var(--card); border: 1px solid #2a2d33; border-radius: 16px; padding: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
-    .products { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-    .product { display: flex; gap: 12px; align-items: center; background: #191b20; border: 1px solid #2a2d33; padding: 10px; border-radius: 14px; }
-    .product .img {
-      width: 56px; height: 56px; border-radius: 12px; background: linear-gradient(135deg,#2b2e35,#1f2228);
-      display: grid; place-items: center; font-size: 26px;
-    }
-    .product .meta { flex: 1; }
-    .name { font-weight: 700; }
-    .muted { color: var(--muted); font-size: 13px; }
-    .price { font-weight: 700; }
-    .qty { display: flex; align-items: center; gap: 6px; }
-    button, .btn {
-      padding: 8px 12px; border-radius: 12px; border: 1px solid #2a2d33; background: #20232a; color: var(--text);
-      cursor: pointer; font-weight: 600;
-    }
-    .btn-add { background: #1d2b21; border-color: #2d4533; }
-    .btn-add:hover { background: #243628; }
-    .btn-danger { background: #2b1f1f; border-color: #4a2a2a; color: #ffb3b3; }
-    .btn-danger:hover { background: #3a2525; }
-    .cart-list { display: grid; gap: 10px; margin: 10px 0 16px; }
-    .cart-row { display: grid; grid-template-columns: 1fr auto auto auto; align-items: center; gap: 10px; }
-    .totals { display: grid; gap: 6px; }
-    .totals .row { display: flex; justify-content: space-between; }
-    .total { font-size: 18px; font-weight: 800; }
-    .checkout { display: grid; gap: 8px; }
-    input, textarea {
-      width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid #2a2d33; background: #1b1e24; color: var(--text);
-    }
-    .footer { margin-top: 14px; display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 13px; }
-        .product {
-    display: flex;
-    flex-direction: column; /* 改成上下排列 */
-    gap: 8px;
-    align-items: stretch;
-    background: #191b20;
-    border: 1px solid #2a2d33;
-    padding: 10px;
-    border-radius: 14px;
-  }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, "PingFang TC", "Noto Sans TC", Arial, sans-serif;background:var(--bg);color:var(--ink)}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
 
-  .product .top {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-  }
+    /* Header */
+    .header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #eee;height:var(--header-h);display:flex;align-items:center}
+    .container{max-width:1160px;margin:0 auto;padding:0 20px}
+    .row{display:flex;align-items:center;justify-content:space-between;width:100%}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.5px;margin-right:auto}
+    .brand .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--accent));display:grid;place-items:center;color:#fff;font-weight:800;box-shadow:var(--shadow)}
+    nav{display:flex;gap:24px;align-items:center}
+    nav a{padding:10px 8px;border-radius:10px;color:#333;font-weight:600}
+    nav a.active, nav a:hover{background:#f5efe9;color:var(--brand)}
+    .buy-btn{padding:10px 16px;border-radius:12px;background:var(--brand);color:#fff;font-weight:700;box-shadow:var(--shadow)}
+    .buy-btn:hover{color:var(--brand-600)}
 
-  .product .meta {
-    flex: 1;
-  }
+    /* Mobile nav */
+    .menu-btn{display:none}
+    @media (max-width: 840px){
+      nav{position:fixed;inset:var(--header-h) 0 auto 0;background:#fff;border-bottom:1px solid #eee;display:none;flex-direction:column;padding:12px}
+      nav.open{display:flex}
+      .menu-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid #eee;background:#fff}
+      .buy-btn{margin-top:8px;text-align:center}
+    }
 
-  .product .bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: auto; /* 把按鈕推到最底 */
-  }
-    .product .bottom .btn-add {
-    width: 100%;
-    padding: 10px;
-    font-weight: 700;
-    text-align: center;
-  }
-  input[type=number]::-webkit-inner-spin-button,
-  input[type=number]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  input[type=number] {
-    -moz-appearance: textfield; /* Firefox */
-  }
-   @media (max-width: 900px) {
-    .grid { grid-template-columns: 1fr; }
-    .products { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
+    /* Sections */
+    section{padding:88px 0;scroll-margin-top:calc(var(--header-h) + 16px)}
+    .hero{padding:120px 0;background:radial-gradient(60% 80% at 70% 10%, #fff5ea 0%, rgba(255,255,255,0) 60%)}
+    .hero .title{font-family:"Playfair Display", serif;font-size:48px;line-height:1.1;margin:0 0 12px;color:var(--brand)}
+    .hero .subtitle{font-size:18px;color:#444;max-width:620px}
 
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:24px}
+    .card{grid-column:span 4;background:#fff;border:1px solid #eee;border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+    .card h3{margin:8px 0 6px}
+    .badge{display:inline-block;font-size:12px;padding:4px 10px;border-radius:999px;background:#f5efe9;color:var(--brand);font-weight:700}
+
+    @media (max-width: 920px){ .card{grid-column:span 6} }
+    @media (max-width: 640px){ .card{grid-column:span 12} .hero{padding:100px 0} .hero .title{font-size:36px} }
+
+    .two-col{display:grid;grid-template-columns:1.2fr 1fr;gap:32px;align-items:center}
+    @media (max-width: 900px){.two-col{grid-template-columns:1fr}}
+
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 16px;border-radius:12px;background:#111;color:#fff;font-weight:700}
+    .btn.alt{background:#fff;color:#111;border:1px solid #ddd}
+
+    .footer{padding:40px 0;border-top:1px solid #eee;color:#6b7280}
+
+    /* 菜單 tabs */
+    .tabs{display:flex;gap:8px;flex-wrap:wrap}
+    .tab{padding:10px 14px;border-radius:12px;border:1px solid #ddd;background:#fff;cursor:pointer;font-weight:700}
+    .tab.active{background:#f5efe9;color:var(--brand);border-color:#eadfd5}
+    .menu-panels{margin-top:16px}
+    .menu-panel{display:none}
+    .menu-panel.active{display:block}
+    .menu-list{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+    .menu-item{grid-column:span 6;background:#fff;border:1px solid #eee;border-radius:14px;padding:14px;box-shadow:var(--shadow)}
+    .menu-item h4{margin:0 0 6px}
+    .price{margin-left:auto;font-weight:800;color:var(--brand)}
+    .line{display:flex;align-items:center;gap:12px}
+    @media(max-width:720px){.menu-item{grid-column:span 12}}
+    
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="title">☕ 一頁式咖啡訂購</div>
-      <div class="pill" id="cart-pill">購物車：0 件，NT$ 0</div>
-    </header>
+  <!-- Header -->
+  <header class="header">
+    <div class="container row">
+      <a class="brand" href="#top" aria-label="返回頁首">
+        <span class="logo">☕</span>
+        <span>Dawit's Coffee</span>
+      </a>
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="siteNav">☰ 選單</button>
+      <nav id="siteNav" aria-label="主選單">
+        <a href="#top">關於我們</a>
+        <a href="#menu">咖啡豆</a>
+        <a href="#locations">門市據點</a>
+        <a href="#reviews">評價</a>
+        <a class="buy-btn" href="#order">立即購買</a>
+      </nav>
+    </div>
+  </header>
 
-    <div class="grid">
-      <!-- Left: Products -->
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <div style="font-weight:800;">咖啡品項</div>
-          <div class="muted">滿 NT$500 免運</div>
+  <!-- Hero -->
+  <section id="top" class="hero">
+    <div class="container two-col">
+      <div>
+        <p class="badge">精品咖啡．每日新鮮烘焙</p>
+        <h1 class="title">讓今天，從一杯好咖啡開始</h1>
+        <p class="subtitle">嚴選產地、職人烘焙，從果香到堅果調性，找到屬於你的風味。到店、外帶、外送一鍵搞定。</p>
+        <div style="display:flex;gap:12px;margin-top:18px">
+          <a class="btn" href="#menu">看菜單</a>
+          <a class="btn alt" href="#order">立即訂購</a>
         </div>
-        <div id="products" class="products"></div>
+      </div>
+      <div>
+        <img src="./img/menu.jpg" alt="拉花咖啡與咖啡豆" style="border-radius:20px;box-shadow:var(--shadow)"/>
+      </div>
+    </div>
+  </section>
+
+  <!-- Menu (以文字卡片呈現你給的圖片內容) -->
+  <section id="menu">
+    <div class="container">
+      <h2>嚴選咖啡豆</h2>
+
+      <!-- tabs -->
+      <div class="tabs" role="tablist" aria-label="菜單分類">
+        <button class="tab active" data-target="#panel-gift" role="tab" aria-selected="true">禮盒</button>
+        <button class="tab" data-target="#panel-drip" role="tab" aria-selected="false">掛耳</button>
+        <button class="tab" data-target="#panel-beans" role="tab" aria-selected="false">烘豆</button>
       </div>
 
-      <!-- Right: Cart + Checkout -->
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <div style="font-weight:800;">我的購物車</div>
-          <button id="btnClear" class="btn btn-danger">清空</button>
+      <div class="menu-panels">
+        <!-- Gift boxes -->
+        <div id="panel-gift" class="menu-panel active" role="tabpanel">
+          <div class="menu-list">
+            <div class="menu-item">
+              <div class="line"><h4>精裝咖啡禮盒（12入）</h4><span class="price">$800 / 盒</span></div>
+              <p>含多款掛耳包，送禮體面。</p>
+            </div>
+            <div class="menu-item">
+              <div class="line"><h4>精裝咖啡禮盒（20入）</h4><span class="price">$1200 / 盒</span></div>
+              <p>大量分享更划算。</p>
+            </div>
+            <div class="menu-item">
+              <div class="line"><h4>平裝咖啡禮盒（12入）</h4><span class="price">$680 / 盒</span></div>
+              <p>經濟實惠的入門選擇。</p>
+            </div>
+            <div class="menu-item">
+              <div class="line"><h4>平裝咖啡禮盒（20入）</h4><span class="price">$1080 / 盒</span></div>
+              <p>多人共享剛剛好。</p>
+            </div>
+          </div>
         </div>
 
-        <div id="cartList" class="cart-list"></div>
+        <!-- Drip bags -->
+        <div id="panel-drip" class="menu-panel" role="tabpanel">
+          <div class="menu-list">
+            <div class="menu-item">
+              <div class="line"><h4>達味特調 Dawit Special</h4><span class="price">$50 / 包</span></div>
+              <p>經典洗處、回甘風調・中焙</p>
+            </div>
+            <div class="menu-item">
+              <div class="line"><h4>日曬吉瑪 Djimmah</h4><span class="price">$50 / 包</span></div>
+              <p>黑醋栗、莓果、黑巧克力・中淺焙</p>
+            </div>
+            <div class="menu-item">
+              <div class="line"><h4>水洗耶加雪菲 Yirgacheffe</h4><span class="price">$50 / 包</span></div>
+              <p>肉桂、蜜蘋果、水果香氣・輕淺焙</p>
+            </div>
+            <div class="menu-item">
+              <div class="line"><h4>經典耶加雪菲 Classic Yirgacheffe</h4><span class="price">$50 / 包</span></div>
+              <p>柑橘風味・中焙</p>
+            </div>
+          </div>
+        </div>
 
-        <div class="totals" id="totals"></div>
-
-        <hr style="border-color:#2a2d33; margin: 12px 0;">
-
-        <div class="checkout">
-          <div style="font-weight:800;">收件資訊</div>
-          <input id="name" placeholder="收件人*" />
-          <input id="phone" placeholder="電話*" />
-          <input id="address" placeholder="地址*" />
-          <textarea id="notes" placeholder="備註 (可不填)"></textarea>
-          <button id="btnCheckout" class="btn-add">送出訂單</button>
-          <div class="muted" id="message"></div>
+        <!-- Roasted beans -->
+        <div id="panel-beans" class="menu-panel" role="tabpanel">
+          <div class="menu-list">
+            <div class="menu-item">
+              <div class="line"><h4>衣索匹亞藝伎 Gesha 100g</h4><span class="price">$700 / 包</span></div>
+              <p>限定烘焙，另行公告。</p>
+            </div>
+            <div class="menu-item">
+              <div class="line"><h4>水洗耶加雪菲 200g</h4><span class="price">$500 / 包</span></div>
+              <p>Yirgacheffe・經典花果香。</p>
+            </div>
+            <div class="menu-item">
+              <div class="line"><h4>日曬吉瑪 200g</h4><span class="price">$400 / 包</span></div>
+              <p>Djimmah・莓果甜感。</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+  </section>
 
-    <div class="footer">
-      <div>Made with Node.js + Express (Session Cart)</div>
-      <a class="muted" href="https://example.com" target="_blank" rel="noreferrer">示範頁面（本機執行）</a>
+
+
+  <!-- Locations -->
+  <section id="locations">
+    <div class="container">
+      <h2>門市據點</h2>
+      <div class="grid" style="margin-top:16px">
+        <article class="card">
+          <h3>台北中山店</h3>
+          <p>台北市中山區南京西路 123 號</p>
+          <p>週一至週日 08:00–20:00</p>
+        </article>
+        <article class="card">
+          <h3>台中草悟店</h3>
+          <p>台中市西區英才路 88 號</p>
+          <p>週一至週日 09:00–21:00</p>
+        </article>
+        <article class="card">
+          <h3>高雄鹽埕店</h3>
+          <p>高雄市鹽埕區大義街 66 號</p>
+          <p>週一至週日 09:00–20:00</p>
+        </article>
+      </div>
     </div>
-  </div>
+  </section>
 
-<script>
-  const nt = n => new Intl.NumberFormat('zh-Hant', { style: 'currency', currency: 'TWD', maximumFractionDigits: 0 }).format(n);
-  const el = (sel) => document.querySelector(sel);
-
-  async function api(url = '', opts = {}) {
-    const res = await fetch(url, { headers: { 'Content-Type': 'application/json' }, ...opts });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.error || 'Request error');
-    }
-    return res.json();
-  }
-
-  function productEmoji(id) {
-    switch(id){
-      case 'espresso': return '☕'; // 小杯濃縮
-      case 'americano': return '🥤'; // 冰或熱美式
-      case 'latte': return '🥛';
-      case 'cappuccino': return '🍵'; // 奶泡感
-      case 'mocha': return '🍫';
-      case 'coldbrew': return '🧊';
-      default: return '☕';
-    }
-  }
-
-  function renderProducts(list) {
-    const box = el('#products');
-    box.innerHTML = '';
-    list.forEach(p => {
-      const div = document.createElement('div');
-      div.className = 'product';
-      div.innerHTML = `
-      <div class="top">
-        <div class="img">${productEmoji(p.id)}</div>
-        <div class="meta">
-          <div class="name">${p.name}</div>
-          <div class="muted">NT$ ${p.price}</div>
-        </div>
-        <div class="qty">
-          <button data-pid="${p.id}" data-delta="-1">-</button>
-          <input type="number" value="1" min="1" step="1" style="width:64px;text-align:center;" />
-          <button data-pid="${p.id}" data-delta="1">+</button>
-        </div>
+  <!-- Reviews -->
+  <section id="reviews">
+    <div class="container">
+      <h2>顧客評價</h2>
+      <div class="grid" style="margin-top:16px">
+        <article class="card"><p>「拿鐵很順口，甜點也很好吃！」 — Ariel</p></article>
+        <article class="card"><p>「外送包裝用心，咖啡香氣十足。」 — Ken</p></article>
+        <article class="card"><p>「豆單選擇多，店員專業又親切。」 — Mei</p></article>
       </div>
-      <div class="bottom">
-        <button class="btn btn-add" data-add="${p.id}">加入</button>
-      </div>
-    `;
-      const [minus, qtyInput, plus] = div.querySelectorAll('.qty > *');
-      minus.addEventListener('click', () => {
-        qtyInput.value = Math.max(1, Number(qtyInput.value || 1) - 1);
-      });
-      plus.addEventListener('click', () => {
-        qtyInput.value = Number(qtyInput.value || 1) + 1;
-      });
-      div.querySelector('[data-add]').addEventListener('click', async () => {
-        const quantity = Number(qtyInput.value || 1);
-        await api('/api/cart/add', { method: 'POST', body: JSON.stringify({ productId: p.id, quantity }) });
-        await refreshCart();
-      });
-      box.appendChild(div);
-    });
-  }
+    </div>
+  </section>
 
-  function renderCart(summary) {
-    const list = el('#cartList');
-    const pill = el('#cart-pill');
-    const totals = el('#totals');
-    list.innerHTML = '';
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container row">
+      <small>© <span id="year"></span> Dawit's Coffee. All rights reserved.</small>
+      <small>Designed by 印研中心</small>
+    </div>
+  </footer>
 
-    let count = 0;
-    summary.items.forEach(item => { count += item.quantity });
+  <script>
+    // 動態年份
+    document.getElementById('year').textContent = new Date().getFullYear();
 
-    pill.textContent = `購物車：${count} 件，${nt(summary.total)}`;
-
-    if (summary.items.length === 0) {
-      list.innerHTML = '<div class="muted">購物車是空的</div>';
-    } else {
-      summary.items.forEach(item => {
-        const row = document.createElement('div');
-        row.className = 'cart-row';
-        row.innerHTML = `
-          <div>${item.name}</div>
-          <div class="muted">x</div>
-          <input type="number" min="0" step="1" value="${item.quantity}" style="width:64px;text-align:center;" />
-          <div class="price">${nt(item.lineTotal)}</div>
-        `;
-        const qtyInput = row.querySelector('input');
-        qtyInput.addEventListener('change', async () => {
-          const q = Math.max(0, Number(qtyInput.value || 0));
-          try {
-            await api('/api/cart/update', { method: 'POST', body: JSON.stringify({ productId: item.id, quantity: q }) });
-            await refreshCart();
-          } catch (e) {
-            alert(e.message);
-          }
-        });
-        list.appendChild(row);
-      });
-    }
-    totals.innerHTML = `
-      <div class="row"><div>小計</div><div>${nt(summary.subtotal)}</div></div>
-      <div class="row"><div>運費</div><div>${summary.shipping === 0 ? '免運' : nt(summary.shipping)}</div></div>
-      <div class="row total"><div>總計</div><div>${nt(summary.total)}</div></div>
-    `;
-  }
-
-  async function refreshCart() {
-    const summary = await api('/api/cart');
-    renderCart(summary);
-  }
-
-  async function main() {
-    const { products } = await api('/api/products');
-    renderProducts(products);
-    await refreshCart();
-
-    el('#btnClear').addEventListener('click', async () => {
-      await api('/api/cart/clear', { method: 'POST' });
-      await refreshCart();
+    // Mobile menu toggle
+    const menuBtn = document.getElementById('menuBtn');
+    const nav = document.getElementById('siteNav');
+    menuBtn.addEventListener('click', () => {
+      const open = nav.classList.toggle('open');
+      menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
 
-      el('#btnCheckout').addEventListener('click', async () => {
-        const name = el('#name').value.trim();
-        const phone = el('#phone').value.trim();
-        const address = el('#address').value.trim();
-        const notes = el('#notes').value.trim();
-        el('#message').textContent = '建立訂單中…';
-        try {
-          const data = await api('/api/checkout', { method: 'POST', body: JSON.stringify({ name, phone, address, notes }) });
-          el('#message').textContent = `✅ ${data.message}（訂單編號 ${data.orderId}）`;
-          // 導向後端的 /pay/:orderId（由後端產生綠界表單並自動送出）
-          if (data.redirect) {
-            window.location.href = data.redirect;
-            return; // 後續不執行
+    // 點選導覽連結後關閉手機選單
+    nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>nav.classList.remove('open')));
+
+    // IntersectionObserver：滾動時高亮目前區塊的 nav item
+    const links = Array.from(nav.querySelectorAll('a'));
+    const map = new Map(links.map(a => [a.getAttribute('href'), a]));
+
+    const observer = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        const id = '#' + entry.target.id;
+        const link = map.get(id);
+        if(link){
+          if(entry.isIntersecting){
+            links.forEach(l=>l.classList.remove('active'));
+            link.classList.add('active');
           }
-        } catch (e) {
-          el('#message').textContent = '❌ ' + e.message;
         }
       });
-  }
-  main();
-</script>
+    }, {rootMargin: '-40% 0px -55% 0px', threshold: 0});
 
+    document.querySelectorAll('section[id]').forEach(sec=>observer.observe(sec));
+
+    // Tabs 行為
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(t=>t.addEventListener('click', ()=>{
+      tabs.forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      document.querySelectorAll('.menu-panel').forEach(p=>p.classList.remove('active'));
+      const target = document.querySelector(t.dataset.target);
+      if(target) target.classList.add('active');
+    }));
+  </script>
 </body>
 </html>
